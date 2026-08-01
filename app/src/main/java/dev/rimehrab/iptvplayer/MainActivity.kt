@@ -37,13 +37,12 @@ class MainActivity : AppCompatActivity() {
                             binding = ActivityMainBinding.inflate(layoutInflater)
                             setContentView(binding.root)
 
-                            // Generous buffer so weak/slow streams don't stutter or rebuffer constantly.
                             val loadControl = DefaultLoadControl.Builder()
                             .setBufferDurationsMs(
-                                60_000,  // min buffer before playback can start/resume
-                                180_000, // max buffer held in memory
-                                2_500,   // buffer needed to start playback
-                                5_000    // buffer needed to resume after a rebuffer
+                                60_000,
+                                180_000,
+                                2_500,
+                                5_000
                             )
                             .setPrioritizeTimeOverSizeThresholds(true)
                             .build()
@@ -54,8 +53,6 @@ class MainActivity : AppCompatActivity() {
 
                             binding.playerView.player = player
 
-                            // Phone only in practice — TV remotes don't send touch events, this just adds
-                            // swipe up/down as an extra input path alongside CHANNEL_UP/DOWN and D-pad.
                             gestureDetector = GestureDetector(this, SwipeGestureListener())
                             binding.playerView.setOnTouchListener { _, event ->
                                 gestureDetector.onTouchEvent(event)
@@ -126,3 +123,82 @@ class MainActivity : AppCompatActivity() {
                                 adapter.setFocused(currentIndex)
                                 showLabel(channel.name)
                         }
+
+                        private fun nextChannel() = playChannel(currentIndex + 1)
+                        private fun previousChannel() = playChannel(currentIndex - 1)
+
+                        private fun showLabel(text: String) {
+                            binding.nowPlayingLabel.text = text
+                            binding.nowPlayingLabel.visibility = View.VISIBLE
+                            hideLabelHandler.removeCallbacksAndMessages(null)
+                            hideLabelHandler.postDelayed({
+                                binding.nowPlayingLabel.visibility = View.GONE
+                            }, 3_000)
+                        }
+
+                        private fun toggleList(show: Boolean) {
+                            listVisible = show
+                            binding.channelListContainer.visibility = if (show) View.VISIBLE else View.GONE
+                            if (show) {
+                                binding.channelList.post {
+                                    binding.channelList.layoutManager
+                                    ?.findViewByPosition(currentIndex)
+                                    ?.requestFocus()
+                                }
+                            }
+                        }
+
+                        override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+                            when (keyCode) {
+                                KeyEvent.KEYCODE_CHANNEL_UP -> {
+                                    nextChannel()
+                                    return true
+                                }
+                                KeyEvent.KEYCODE_CHANNEL_DOWN -> {
+                                    previousChannel()
+                                    return true
+                                }
+
+                                KeyEvent.KEYCODE_DPAD_UP -> {
+                                    if (!listVisible) {
+                                        nextChannel()
+                                        return true
+                                    }
+                                }
+                                KeyEvent.KEYCODE_DPAD_DOWN -> {
+                                    if (!listVisible) {
+                                        previousChannel()
+                                        return true
+                                    }
+                                }
+
+                                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                                    toggleList(!listVisible)
+                                    return true
+                                }
+
+                                KeyEvent.KEYCODE_BACK -> {
+                                    if (listVisible) {
+                                        toggleList(false)
+                                        return true
+                                    }
+                                }
+                            }
+                            return super.onKeyDown(keyCode, event)
+                        }
+
+                        override fun onStop() {
+                            super.onStop()
+                            player.playWhenReady = false
+                        }
+
+                        override fun onDestroy() {
+                            super.onDestroy()
+                            player.release()
+                        }
+
+                        companion object {
+                            private const val SWIPE_DISTANCE_THRESHOLD = 100
+                            private const val SWIPE_VELOCITY_THRESHOLD = 100
+                        }
+}
