@@ -19,7 +19,10 @@ object PlaylistLoader {
         conn.connectTimeout = 15_000
         conn.readTimeout = 15_000
         conn.requestMethod = "GET"
+        conn.useCaches = false
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (IPTVPlayer)")
+        conn.setRequestProperty("Cache-Control", "no-cache, no-store")
+        conn.setRequestProperty("Pragma", "no-cache")
 
         val text = conn.inputStream.bufferedReader().use { it.readText() }
         conn.disconnect()
