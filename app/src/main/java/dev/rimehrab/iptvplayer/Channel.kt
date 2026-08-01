@@ -6,7 +6,8 @@ import java.net.URL
 data class Channel(
     val name: String,
     val url: String,
-    val logo: String? = null
+    val logo: String? = null,
+    val category: String? = null
 )
 
 object PlaylistLoader {
@@ -31,11 +32,13 @@ object PlaylistLoader {
     }
 
     private val logoRegex = Regex("tvg-logo=\"(.*?)\"")
+    private val groupRegex = Regex("group-title=\"(.*?)\"")
 
     fun parse(m3u: String): List<Channel> {
         val channels = mutableListOf<Channel>()
         var pendingName = ""
         var pendingLogo: String? = null
+        var pendingCategory: String? = null
 
         for (rawLine in m3u.lineSequence()) {
             val line = rawLine.trim()
@@ -43,12 +46,14 @@ object PlaylistLoader {
                 line.startsWith("#EXTINF") -> {
                     pendingName = line.substringAfterLast(",").trim()
                     pendingLogo = logoRegex.find(line)?.groupValues?.get(1)
+                    pendingCategory = groupRegex.find(line)?.groupValues?.get(1)
                 }
                 line.startsWith("http://") || line.startsWith("https://") -> {
                     val name = if (pendingName.isNotBlank()) pendingName else "Channel ${channels.size + 1}"
-                    channels.add(Channel(name, line, pendingLogo))
+                    channels.add(Channel(name, line, pendingLogo, pendingCategory))
                     pendingName = ""
                     pendingLogo = null
+                    pendingCategory = null
                 }
             }
         }

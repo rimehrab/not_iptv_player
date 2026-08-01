@@ -1,0 +1,7 @@
+<resources>
+    <color name="teal_highlight">#1BA8A0</color>
+    <color name="overlay_bg">#CC0A0A0A</color>
+    <color name="card_bg">#DD121212</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_muted">#B3FFFFFF</color>
+</resources>
