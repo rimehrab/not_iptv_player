@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
                 5_000    // buffer needed to resume after a rebuffer
             )
             .setPrioritizeTimeOverSizeThresholds(true)
-            .setBackBufferDurationMs(30_000, true) // keep some buffer behind playback position too
             .build()
 
         player = ExoPlayer.Builder(this)
