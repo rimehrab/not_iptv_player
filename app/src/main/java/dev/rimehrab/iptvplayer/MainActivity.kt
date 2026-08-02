@@ -123,8 +123,8 @@ class MainActivity : AppCompatActivity() {
                 playChannel(startIndex)
             } else {
                 binding.nowPlayingLogo.visibility = View.GONE
-                binding.nowPlayingCategory.text = "playlist"
-                binding.nowPlayingName.text = "Failed to load: ${PlaylistLoader.PLAYLIST_URL}"
+                binding.nowPlayingCategory.text = "Connection problem"
+                binding.nowPlayingName.text = "Please check your internet connection"
                 binding.nowPlayingNumber.text = ""
                 binding.nowPlayingCard.visibility = View.VISIBLE
             }
@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity() {
     private fun previousChannel() = playChannel(currentIndex - 1)
 
     private fun showChannelToast(channel: Channel, number: Int) {
-        binding.nowPlayingCategory.text = "playlist  ▶  ${channel.category ?: "Live"}"
+        binding.nowPlayingCategory.text = "▶  ${channel.category ?: "Live"}"
         binding.nowPlayingName.text = channel.name
         binding.nowPlayingNumber.text = number.toString()
 
