@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -155,7 +156,16 @@ class MainActivity : AppCompatActivity() {
         val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
             .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(6)) // retry flaky streams harder before giving up
 
-        val mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(channel.url))
+        val mediaItem = MediaItem.Builder()
+            .setUri(channel.url)
+            .apply {
+                if (channel.url.contains("m3u8", ignoreCase = true)) {
+                    setMimeType(MimeTypes.APPLICATION_M3U8)
+                }
+            }
+            .build()
+
+        val mediaSource = mediaSourceFactory.createMediaSource(mediaItem)
 
         player.setMediaSource(mediaSource)
         player.prepare()
