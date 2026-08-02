@@ -45,10 +45,14 @@ class ChannelAdapter(
         )
 
         holder.row.setOnClickListener { onSelect(position) }
-        holder.row.setOnFocusChangeListener { _, hasFocus ->
+        holder.row.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
+                val previous = focusedPosition
                 focusedPosition = position
-                notifyDataSetChanged()
+                holder.row.setBackgroundColor(holder.row.context.getColor(R.color.teal_highlight))
+                if (previous != position) {
+                    view.post { notifyItemChanged(previous) }
+                }
             }
         }
     }
