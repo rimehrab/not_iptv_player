@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'dev.rimehrab.iptvplayer'
+    namespace 'dev.rimehrab.terebi'
     compileSdk 34
 
     defaultConfig {
-        applicationId "dev.rimehrab.iptvplayer"
+        applicationId "dev.rimehrab.terebi"
         minSdk 21
         targetSdk 34
         versionCode 1

@@ -1,4 +1,4 @@
-# IPTV Player
+# Terebi
 
 Simple IPTV player, one UI for phone and TV. Android 5 (API 21) and up.
 
