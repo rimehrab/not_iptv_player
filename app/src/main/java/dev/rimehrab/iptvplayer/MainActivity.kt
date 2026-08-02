@@ -12,8 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import dev.rimehrab.iptvplayer.databinding.ActivityMainBinding
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 5_000    // buffer needed to resume after a rebuffer
             )
             .setPrioritizeTimeOverSizeThresholds(true)
+            .setBackBufferDurationMs(30_000, true) // keep some buffer behind playback position too
             .build()
 
         player = ExoPlayer.Builder(this)
@@ -141,7 +145,20 @@ class MainActivity : AppCompatActivity() {
         currentIndex = ((index % channels.size) + channels.size) % channels.size
 
         val channel = channels[currentIndex]
-        player.setMediaItem(MediaItem.fromUri(channel.url))
+
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setUserAgent(channel.headers["User-Agent"] ?: DEFAULT_USER_AGENT)
+            .setConnectTimeoutMs(15_000)
+            .setReadTimeoutMs(15_000)
+            .setAllowCrossProtocolRedirects(true)
+            .setDefaultRequestProperties(channel.headers)
+
+        val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+            .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(6)) // retry flaky streams harder before giving up
+
+        val mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(channel.url))
+
+        player.setMediaSource(mediaSource)
         player.prepare()
         player.playWhenReady = true
 
@@ -255,5 +272,7 @@ class MainActivity : AppCompatActivity() {
         private const val SWIPE_VELOCITY_THRESHOLD = 100
         private const val PREFS_NAME = "iptv_player_prefs"
         private const val KEY_LAST_CHANNEL_URL = "last_channel_url"
+        private const val DEFAULT_USER_AGENT =
+            "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36"
     }
 }
