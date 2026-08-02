@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -204,9 +205,13 @@ class MainActivity : AppCompatActivity() {
         binding.channelListContainer.visibility = if (show) View.VISIBLE else View.GONE
         if (show) {
             binding.channelList.post {
-                binding.channelList.layoutManager
-                    ?.findViewByPosition(currentIndex)
-                    ?.requestFocus()
+                try {
+                    binding.channelList.layoutManager
+                        ?.findViewByPosition(currentIndex)
+                        ?.requestFocus()
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "requestFocus into channel list failed", e)
+                }
             }
         }
     }
@@ -243,7 +248,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                if (!listVisible) {
+                if (!listVisible && channels.isNotEmpty()) {
                     toggleList(true)
                     return true
                 }

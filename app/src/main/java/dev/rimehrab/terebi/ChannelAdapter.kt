@@ -1,5 +1,6 @@
 package dev.rimehrab.terebi
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -51,7 +52,13 @@ class ChannelAdapter(
                 focusedPosition = position
                 holder.row.setBackgroundColor(holder.row.context.getColor(R.color.teal_highlight))
                 if (previous != position) {
-                    view.post { notifyItemChanged(previous) }
+                    view.post {
+                        try {
+                            notifyItemChanged(previous)
+                        } catch (e: Exception) {
+                            Log.e("ChannelAdapter", "notifyItemChanged failed", e)
+                        }
+                    }
                 }
             }
         }
