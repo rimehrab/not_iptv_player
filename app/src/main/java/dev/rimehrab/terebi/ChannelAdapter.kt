@@ -1,6 +1,5 @@
 package dev.rimehrab.terebi
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -52,14 +51,11 @@ class ChannelAdapter(
                 val previous = focusedPosition
                 focusedPosition = position
                 holder.row.setBackgroundColor(ContextCompat.getColor(holder.row.context, R.color.teal_highlight))
+
                 if (previous != position) {
-                    view.post {
-                        try {
-                            notifyItemChanged(previous)
-                        } catch (e: Exception) {
-                            Log.e("ChannelAdapter", "notifyItemChanged failed", e)
-                        }
-                    }
+                    val recyclerView = view.parent as? RecyclerView
+                    val previousRow = (recyclerView?.findViewHolderForAdapterPosition(previous) as? VH)?.row
+                    previousRow?.setBackgroundColor(0x00000000)
                 }
             }
         }
