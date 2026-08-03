@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 
@@ -42,7 +43,7 @@ class ChannelAdapter(
         }
 
         holder.row.setBackgroundColor(
-            if (isSelected) holder.row.context.getColor(R.color.teal_highlight) else 0x00000000
+            if (isSelected) ContextCompat.getColor(holder.row.context, R.color.teal_highlight) else 0x00000000
         )
 
         holder.row.setOnClickListener { onSelect(position) }
@@ -50,7 +51,7 @@ class ChannelAdapter(
             if (hasFocus) {
                 val previous = focusedPosition
                 focusedPosition = position
-                holder.row.setBackgroundColor(holder.row.context.getColor(R.color.teal_highlight))
+                holder.row.setBackgroundColor(ContextCompat.getColor(holder.row.context, R.color.teal_highlight))
                 if (previous != position) {
                     view.post {
                         try {
