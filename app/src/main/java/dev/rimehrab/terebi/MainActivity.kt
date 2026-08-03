@@ -9,6 +9,7 @@ import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+
+        showLastCrashIfAny()
 
         // Generous buffer so weak/slow streams don't stutter or rebuffer constantly.
         val loadControl = DefaultLoadControl.Builder()
@@ -105,6 +108,18 @@ class MainActivity : AppCompatActivity() {
             }
             return false
         }
+    }
+
+    private fun showLastCrashIfAny() {
+        val trace = prefs.getString(TerebiApplication.KEY_LAST_CRASH, null) ?: return
+        prefs.edit().remove(TerebiApplication.KEY_LAST_CRASH).apply()
+
+        AlertDialog.Builder(this)
+            .setTitle("Last crash")
+            .setMessage(trace)
+            .setPositiveButton("OK", null)
+            .setCancelable(true)
+            .show()
     }
 
     private fun loadPlaylist() {

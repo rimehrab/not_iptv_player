@@ -12,6 +12,7 @@
         android:required="false" />
 
     <application
+        android:name=".TerebiApplication"
         android:allowBackup="true"
         android:banner="@drawable/tv_banner"
         android:icon="@mipmap/ic_launcher"
