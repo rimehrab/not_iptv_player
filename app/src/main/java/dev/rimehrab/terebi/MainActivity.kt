@@ -154,6 +154,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.channelList.layoutManager = LinearLayoutManager(this)
         binding.channelList.adapter = adapter
+        binding.channelList.itemAnimator = null // no fade animation on notify — that's what causes the scroll trail/ghosting
     }
 
     private fun playChannel(index: Int) {
