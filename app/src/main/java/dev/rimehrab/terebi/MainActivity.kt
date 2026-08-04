@@ -9,6 +9,7 @@ import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
 
@@ -276,15 +279,22 @@ class MainActivity : AppCompatActivity() {
                     return true
                 }
             }
-
-            KeyEvent.KEYCODE_BACK -> {
-                if (listVisible) {
-                    toggleList(false)
-                    return true
-                }
-            }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onBackPressed() {
+        if (listVisible) {
+            toggleList(false)
+            return
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Exit Terebi?")
+            .setMessage("Are you sure you want to exit?")
+            .setPositiveButton("Exit") { _, _ -> finish() }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     override fun onStop() {
