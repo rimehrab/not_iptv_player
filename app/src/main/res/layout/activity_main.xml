@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         app:use_controller="false" />
 
-    <!-- Channel-switch toast: number sits in the blank space next to the logo, name below on its own -->
+    <!-- Channel-switch toast: number, then category, then name, each own line; logo top-right -->
     <LinearLayout
         android:id="@+id/nowPlayingCard"
         android:layout_width="wrap_content"
@@ -26,29 +26,20 @@
         android:paddingBottom="16dp"
         android:visibility="gone">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/nowPlayingLogo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:layout_marginBottom="8dp"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/nowPlayingNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/nowPlayingNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="14dp"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp" />
-
-            <ImageView
-                android:id="@+id/nowPlayingLogo"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:scaleType="fitCenter" />
-
-        </LinearLayout>
+            android:textColor="@color/text_primary"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/nowPlayingCategory"
